@@ -1,0 +1,76 @@
+/*
+o	File Name: 
+o	Author:
+o	Date drafted: 
+o	Date revised: 
+o	Datasets pulled in: 
+o	Datasets produced: 
+o	Purpose (a broad overview of what the code does):
+
+1) 
+
+NOTE: 
+NOTE: 
+*/
+
+clear all 
+version 14
+capture log close
+set more off
+
+***********************************************************************************************************************************************************
+	// 0. Change directories and set up a name to add to any output so it can be traced back to this file
+***********************************************************************************************************************************************************
+local pc = 0 // make switch to go back and forth b/w pc and mac. 
+
+
+if `pc' ==1 {
+/* PC */
+global 	olddata 	"\\128.18.33.163\Programs\XXXX"						// where you pull the clean data from
+global 	newdata 	"\\128.18.33.163\Programs\XXXX"						// where you store the clean data 
+global 	output 		"\\128.18.33.163\Programs\XXXX"						// where you output results to
+global 	logs		"\\128.18.33.163\Programs\XXXX"						// where you save log files, etc.
+}	
+
+else {
+/* MAC */
+global 	olddata 	"/Volumes/Programs/XXX"								// where you pull the clean data from (mac)
+global newdata 	"/Volumes/Programs/XXX"									// where you store the clean data from (mac)
+global 	output 		"/Volumes/Programs/XXX"								// where you output results to (mac)
+global 	logs		"\\128.18.33.163\Programs\XXX"						// where you save log files, etc.
+		}
+
+global version		""													// use v2 if update this file after posting results
+
+log using "${logs}XXX.smcl", replace
+
+
+use "/Volumes/Groups/QA_Program/McKnight (P20981)/Data/Clean Data/step_12-15.dta", clear
+
+keep if yr==15
+destring grade, replace
+drop if grade>3
+
+gen prog=progress
+replace prog=3 if progress>3
+replace prog=0 if progress<0
+
+graph bar, over(prog) over(grade, relabel( 1 "PK" 2 "K" )) asyvars ///
+	scheme(vg_blue) ///
+	b1title("Grade",size(medsmall)) ///
+	ytitle("% of Students ") ///
+	legend(cols(4) title("Steps progressed in 1 year", size(medsmall)) region(color(white))) ///
+	yscale(range(0(2)20)) ///
+	ylabel(0(5)20)  ///
+	graphregion(color(white))
+
+
+
+
+
+
+
+
+log close	
+exit
+ 
